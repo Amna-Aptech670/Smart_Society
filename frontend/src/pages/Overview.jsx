@@ -4,7 +4,7 @@ import { widgetConfig } from '../config/widgetConfig'
 import StatCard from '../components/StatCard'
 import { getResidents } from '../services/residentApi'
 import { getBills } from '../services/billingApi'
-import { getComplaints } from '../services/complaintApi'
+import { getComplaints, getComplaintsSummary } from '../services/complaintApi'
 import { getVisitorLogs } from '../services/auditApi'
 import { Users, Receipt, MessageSquareWarning, UserCheck } from 'lucide-react'
 import {
@@ -25,8 +25,9 @@ const Overview = () => {
       getResidents().catch(() => []),
       getBills().catch(() => []),
       getComplaints().catch(() => []),
+      getComplaintsSummary().catch(() => null),
       getVisitorLogs().catch(() => []),
-    ]).then(([residents, bills, complaints, visitors]) => {
+    ]).then(([residents, bills, complaints, summary, visitors]) => {
       const unpaidBills = bills.filter(b => b.payment_status !== 'Paid').length
       const pendingComplaints = complaints.filter(c => c.status !== 'Resolved').length
       const today = new Date().toDateString()
@@ -36,7 +37,7 @@ const Overview = () => {
       setAdminStats([
         { label: 'Residents', value: residents.length, icon: Users, color: 'primary' },
         { label: 'Unpaid Bills', value: unpaidBills, icon: Receipt, color: 'destructive' },
-        { label: 'Open Complaints', value: pendingComplaints, icon: MessageSquareWarning, color: 'secondary' },
+        { label: 'Open Complaints', value: summary?.open ?? pendingComplaints, icon: MessageSquareWarning, color: 'secondary' },
         { label: 'Visitors Today', value: visitorsToday, icon: UserCheck, color: 'primary' },
       ])
     })

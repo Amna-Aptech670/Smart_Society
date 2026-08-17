@@ -14,3 +14,8 @@ export const updateEmergency = async (id, updates) => {
   const res = await api.patch(`/admin/emergency/${id}`, updates)
   return res.data.data
 }
+
+export const getResidentEmergencies = async () => {
+  const res = await api.get('/resident/emergencies')
+  return res.data.data
+}

@@ -26,6 +26,32 @@ const run = async () => {
     console.log('Guard created: guard / guard123');
   }
 
+  const maint1Exists = await User.findOne({ username: 'maintenance1' });
+  if (!maint1Exists) {
+    await User.create({
+      username: 'maintenance1',
+      password: 'maintenance123',
+      role: 'Maintenance',
+      name: 'Rahul Sharma',
+      email: 'rahul@smartsociety.com',
+      flat_id: null
+    });
+    console.log('Maintenance 1 created: maintenance1 / maintenance123');
+  }
+
+  const maint2Exists = await User.findOne({ username: 'maintenance2' });
+  if (!maint2Exists) {
+    await User.create({
+      username: 'maintenance2',
+      password: 'maintenance123',
+      role: 'Maintenance',
+      name: 'Vijay Patel',
+      email: 'vijay@smartsociety.com',
+      flat_id: null
+    });
+    console.log('Maintenance 2 created: maintenance2 / maintenance123');
+  }
+
   process.exit(0);
 };
 

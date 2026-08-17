@@ -35,7 +35,12 @@ const emergencySchema = new mongoose.Schema(
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
-    }
+    },
+    source: {
+  type: String,
+  enum: ['Admin', 'Resident'],
+  default: 'Admin'
+},
   },
   {
     timestamps: true

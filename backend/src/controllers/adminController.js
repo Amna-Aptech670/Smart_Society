@@ -8,6 +8,7 @@ import Facility from '../models/Facility.js';
 import Poll from '../models/Poll.js';
 import Emergency from '../models/Emergency.js';
 import GuardTask from '../models/GuardTask.js';
+import Booking from '../models/Booking.js';
 
 export const createFlat = async (req, res, next) => {
   try {
@@ -327,46 +328,72 @@ export const getBills = async (req, res, next) => {
 
 export const broadcastNotice = async (req, res, next) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, expires_at } = req.body
 
     if (!title || !description) {
       return res.status(400).json({
         success: false,
-        message: 'title and description are required.'
-      });
+        message: 'Title and description are required.',
+      })
     }
 
     const notice = await Notice.create({
-      title,
-      description,
-      created_by: req.user.id
-    });
+      title: title.trim(),
+      description: description.trim(),
+      created_by: req.user.id,
+      expires_at: expires_at ? new Date(expires_at) : null,
+    })
+
+    await notice.populate('created_by', 'username role')
 
     res.status(201).json({
       success: true,
-      message: 'Notice broadcasted successfully',
-      data: notice
-    });
+      message: 'Notice broadcast successfully.',
+      data: {
+        _id: notice._id,
+        title: notice.title,
+        description: notice.description,
+        created_by: notice.created_by,
+        postedBy: notice.created_by?.username || 'Society Admin',
+        createdAt: notice.createdAt,
+        expires_at: notice.expires_at,
+      },
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 export const getNotices = async (req, res, next) => {
   try {
-    const notices = await Notice.find()
+    const notices = await Notice.find({
+      $or: [
+        { expires_at: null },
+        { expires_at: { $gte: new Date() } },
+      ],
+    })
       .populate('created_by', 'username role')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+
+    const formattedNotices = notices.map((notice) => ({
+      _id: notice._id,
+      title: notice.title,
+      description: notice.description,
+      created_by: notice.created_by,
+      postedBy: notice.created_by?.username || 'Society Admin',
+      createdAt: notice.createdAt,
+      expires_at: notice.expires_at,
+    }))
 
     res.status(200).json({
       success: true,
-      count: notices.length,
-      data: notices
-    });
+      count: formattedNotices.length,
+      data: formattedNotices,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 export const getComplaints = async (req, res, next) => {
   try {
@@ -376,12 +403,67 @@ export const getComplaints = async (req, res, next) => {
         select: 'username role flat_id',
         populate: { path: 'flat_id' }
       })
+      .populate('assigned_to', 'username name email')
       .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
       count: complaints.length,
       data: complaints
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getComplaintSlaState = (complaint) => {
+  const currentTime = new Date();
+
+  if (complaint.status === 'Resolved') {
+    if (!complaint.resolved_at || !complaint.sla_deadline) {
+      return 'Resolved';
+    }
+    return new Date(complaint.resolved_at) <= new Date(complaint.sla_deadline)
+      ? 'Resolved Within SLA'
+      : 'Resolved After SLA';
+  }
+
+  if (!complaint.sla_deadline) {
+    return 'No SLA Set';
+  }
+
+  const deadline = new Date(complaint.sla_deadline);
+  const remainingMs = deadline.getTime() - currentTime.getTime();
+
+  if (remainingMs <= 0) return 'SLA Breached';
+  if (remainingMs <= 6 * 60 * 60 * 1000) return 'Due Soon';
+  return 'Within SLA';
+};
+
+export const getComplaintsSummary = async (req, res, next) => {
+  try {
+    const complaints = await Complaint.find()
+      .populate('assigned_to', 'username name email')
+      .sort({ createdAt: -1 });
+
+    const summary = {
+      total: complaints.length,
+      open: complaints.filter((complaint) => complaint.status === 'Pending').length,
+      assigned: complaints.filter((complaint) => complaint.assigned_to && complaint.status !== 'Resolved').length,
+      inProgress: complaints.filter((complaint) => complaint.status === 'In-Progress').length,
+      resolved: complaints.filter((complaint) => complaint.status === 'Resolved').length,
+      slaBreached: complaints.filter((complaint) => getComplaintSlaState(complaint) === 'SLA Breached').length,
+      dueSoon: complaints.filter((complaint) => getComplaintSlaState(complaint) === 'Due Soon').length,
+      byStatus: {
+        Pending: complaints.filter((complaint) => complaint.status === 'Pending').length,
+        'In-Progress': complaints.filter((complaint) => complaint.status === 'In-Progress').length,
+        Resolved: complaints.filter((complaint) => complaint.status === 'Resolved').length
+      }
+    };
+
+    res.status(200).json({
+      success: true,
+      data: summary
     });
   } catch (error) {
     next(error);
@@ -635,7 +717,8 @@ export const createEmergency = async (req, res, next) => {
       type,
       location,
       contact_number,
-      created_by: req.user.id
+      created_by: req.user.id,
+      source: 'Admin'
     });
 
     res.status(201).json({
@@ -807,6 +890,142 @@ export const updateGuardTask = async (req, res, next) => {
       success: true,
       message: 'Task updated successfully',
       data: task
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMaintenancePersonnel = async (req, res, next) => {
+  try {
+    const maintenance = await User.find({ role: 'Maintenance' }).select('-password');
+    res.status(200).json({
+      success: true,
+      count: maintenance.length,
+      data: maintenance
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const assignComplaint = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { assigned_to } = req.body;
+
+    if (!assigned_to) {
+      return res.status(400).json({
+        success: false,
+        message: 'assigned_to (User ID) is required.'
+      });
+    }
+
+    const staff = await User.findOne({ _id: assigned_to, role: 'Maintenance' });
+    if (!staff) {
+      return res.status(404).json({
+        success: false,
+        message: 'Specified maintenance personnel not found.'
+      });
+    }
+
+    const complaint = await Complaint.findById(id);
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: 'Complaint not found.'
+      });
+    }
+
+    const slaDeadline = complaint.sla_deadline || new Date(complaint.createdAt.getTime() + 24 * 60 * 60 * 1000);
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      id,
+      {
+        assigned_to,
+        assigned_at: new Date(),
+        sla_deadline: slaDeadline,
+        status: 'In-Progress'
+      },
+      { new: true, runValidators: true }
+    )
+      .populate('assigned_to', 'username name email')
+      .populate({
+        path: 'resident_id',
+        select: 'username role flat_id',
+        populate: { path: 'flat_id' }
+      });
+
+    res.status(200).json({
+      success: true,
+      message: 'Complaint assigned successfully',
+      data: updatedComplaint
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resolveComplaint = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { resolution_notes } = req.body;
+
+    const complaint = await Complaint.findById(id);
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: 'Complaint not found.'
+      });
+    }
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      id,
+      {
+        status: 'Resolved',
+        resolved_at: new Date(),
+        resolution_notes: resolution_notes || ''
+      },
+      { new: true, runValidators: true }
+    )
+      .populate('assigned_to', 'username name email')
+      .populate({
+        path: 'resident_id',
+        select: 'username role flat_id',
+        populate: { path: 'flat_id' }
+      });
+
+    res.status(200).json({
+      success: true,
+      message: 'Complaint resolved successfully',
+      data: updatedComplaint
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFacilityBookings = async (req, res, next) => {
+  try {
+    const bookings = await Booking.find()
+      .populate({
+        path: 'facility_id',
+        select: 'name location timing capacity status'
+      })
+      .populate({
+        path: 'resident_id',
+        select: 'name full_name username email flat_id',
+        populate: {
+          path: 'flat_id',
+          select: 'flat_number number'
+        }
+      })
+      .sort({ date: -1, createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings
     });
   } catch (error) {
     next(error);

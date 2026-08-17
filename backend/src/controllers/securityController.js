@@ -1,5 +1,6 @@
 import Visitor from '../models/Visitor.js';
 import Flat from '../models/Flat.js';
+import Emergency from '../models/Emergency.js';
 
 export const verifyPass = async (req, res, next) => {
   try {
@@ -114,6 +115,25 @@ export const getActiveVisitors = async (req, res, next) => {
       success: true,
       count: activeVisitors.length,
       data: activeVisitors
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getGuardEmergencies = async (req, res, next) => {
+  try {
+    const emergencies = await Emergency.find({
+      source: 'Resident',
+      status: 'Active'
+    })
+      .populate('created_by', 'username')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: emergencies.length,
+      data: emergencies
     });
   } catch (error) {
     next(error);

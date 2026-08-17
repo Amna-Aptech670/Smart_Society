@@ -1,5 +1,29 @@
 import Poll from '../models/Poll.js';
 
+export const getResidentPolls = async (req, res, next) => {
+  try {
+    const now = new Date();
+
+    const polls = await Poll.find({
+      status: 'Active',
+      $or: [
+        { expires_at: null },
+        { expires_at: { $gt: now } }
+      ]
+    })
+      .populate('created_by', 'username role')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: polls.length,
+      data: polls
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const votePoll = async (req, res, next) => {
   try {
     const { id } = req.params;

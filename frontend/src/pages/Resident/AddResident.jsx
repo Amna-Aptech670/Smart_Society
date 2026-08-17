@@ -47,36 +47,36 @@ const AddResident = () => {
 
   <form
     onSubmit={handleSubmit}
-    className="bg-card border border-border rounded-2xl p-6 w-full flex flex-col gap-4 shadow-sm"
+    className="bg-card border border-border rounded-2xl p-6 w-full max-w-none flex flex-col gap-4 shadow-sm"
   >
-    <div>
+    <div className="w-full">
       <label className="text-sm text-muted-foreground">Username</label>
       <input
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         required
-        className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+        className="w-full border border-input rounded-lg px-3 py-2.5 mt-1 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
       />
     </div>
 
-    <div>
+    <div className="w-full">
       <label className="text-sm text-muted-foreground">Password</label>
       <input
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-        className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+        className="w-full border border-input rounded-lg px-3 py-2.5 mt-1 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
       />
     </div>
 
-    <div>
+    <div className="w-full">
       <label className="text-sm text-muted-foreground">Flat</label>
       <select
         value={flatId}
         onChange={(e) => setFlatId(e.target.value)}
         required
-        className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background"
+        className="w-full border border-input rounded-lg px-3 py-2.5 mt-1 bg-background"
       >
         <option value="">Select a flat...</option>
 
@@ -100,11 +100,11 @@ const AddResident = () => {
       </p>
     )}
 
-    <div className="flex justify-end">
+    <div className="flex justify-end pt-2">
       <button
         type="submit"
         disabled={loading}
-        className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-medium hover:opacity-90 transition"
+        className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-medium hover:opacity-90 transition min-w-[180px]"
       >
         {loading ? 'Onboarding...' : 'Onboard Resident'}
       </button>

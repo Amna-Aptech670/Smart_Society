@@ -19,3 +19,8 @@ export const deleteFacility = async (id) => {
   const res = await api.delete(`/admin/facility/${id}`)
   return res.data
 }
+
+export const getFacilityBookings = async () => {
+  const res = await api.get('/admin/facility-bookings')
+  return res.data.data
+}

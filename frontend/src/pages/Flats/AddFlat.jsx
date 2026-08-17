@@ -28,18 +28,18 @@ const AddFlat = () => {
     <div>
       <h2 className="font-heading text-2xl mb-6">Add Flat</h2>
 
-      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 max-w-md flex flex-col gap-3">
-        <div>
+      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 w-full max-w-none flex flex-col gap-4">
+        <div className="w-full">
           <label className="text-sm text-muted-foreground">Block Name</label>
-          <input value={block} onChange={(e) => setBlock(e.target.value)} required className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background" placeholder="A" />
+          <input value={block} onChange={(e) => setBlock(e.target.value)} required className="w-full border border-input rounded-lg px-3 py-2.5 mt-1 bg-background" placeholder="A" />
         </div>
-        <div>
+        <div className="w-full">
           <label className="text-sm text-muted-foreground">Flat Number</label>
-          <input value={number} onChange={(e) => setNumber(e.target.value)} required className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background" placeholder="101" />
+          <input value={number} onChange={(e) => setNumber(e.target.value)} required className="w-full border border-input rounded-lg px-3 py-2.5 mt-1 bg-background" placeholder="101" />
         </div>
-        <div>
+        <div className="w-full">
           <label className="text-sm text-muted-foreground">Occupancy Type</label>
-          <select value={occupancy} onChange={(e) => setOccupancy(e.target.value)} className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background">
+          <select value={occupancy} onChange={(e) => setOccupancy(e.target.value)} className="w-full border border-input rounded-lg px-3 py-2.5 mt-1 bg-background">
             <option value="Owner">Owner</option>
             <option value="Tenant">Tenant</option>
           </select>
@@ -47,9 +47,11 @@ const AddFlat = () => {
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium">
-          {loading ? 'Adding...' : 'Add Flat'}
-        </button>
+        <div className="flex justify-end pt-2">
+          <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-medium min-w-[150px]">
+            {loading ? 'Adding...' : 'Add Flat'}
+          </button>
+        </div>
       </form>
     </div>
   )

@@ -9,6 +9,7 @@ import {
   broadcastNotice,
   getNotices,
   getComplaints,
+  getComplaintsSummary,
   updateComplaintStatus,
   getVisitorLogs,
   getFacilities,
@@ -32,7 +33,11 @@ import {
   getGuards,
   getGuardTasks,
   assignGuardTask,
-  updateGuardTask
+  updateGuardTask,
+  getMaintenancePersonnel,
+  assignComplaint,
+  resolveComplaint,
+  getFacilityBookings
 } from '../controllers/adminController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { roleMiddleware } from '../middlewares/roleMiddleware.js';
@@ -56,17 +61,22 @@ router.get('/bills', getBills);
 router.patch('/bills/:id/pay', markBillPaid);
 router.patch('/bills/:id/penalty', togglePenalty);
 
-router.post('/notice', broadcastNotice);
-router.get('/notices', getNotices);
+router.post('/notice', broadcastNotice)
+router.get('/notices', getNotices)
 
 router.get('/complaints', getComplaints);
+router.get('/complaints/summary', getComplaintsSummary);
 router.patch('/complaints/:id', updateComplaintStatus);
+router.get('/maintenance', getMaintenancePersonnel);
+router.patch('/complaints/:id/assign', assignComplaint);
+router.patch('/complaints/:id/resolve', resolveComplaint);
 
 router.get('/visitor-logs', getVisitorLogs);
 router.get('/visitor-requests', getVisitorRequests);
 router.patch('/visitor-requests/:id', updateVisitorRequest);
 
 router.get('/facilities', getFacilities);
+router.get('/facility-bookings', getFacilityBookings);
 router.post('/facility', createFacility);
 router.patch('/facility/:id', updateFacility);
 router.delete('/facility/:id', deleteFacility);

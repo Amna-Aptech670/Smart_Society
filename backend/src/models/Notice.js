@@ -1,31 +1,35 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 const noticeSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: [true, 'Notice title is required'],
-      trim: true
+      trim: true,
     },
+
     description: {
       type: String,
-      required: [true, 'Notice description is required']
+      required: [true, 'Notice description is required'],
+      trim: true,
     },
+
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'Created by admin ID is required']
+      required: [true, 'Created by admin ID is required'],
     },
-    created_at: {
+
+    expires_at: {
       type: Date,
-      default: Date.now
-    }
+      default: null,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
-);
+)
 
-const Notice = mongoose.model('Notice', noticeSchema);
+const Notice = mongoose.model('Notice', noticeSchema)
 
-export default Notice;
+export default Notice

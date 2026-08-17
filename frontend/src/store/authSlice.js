@@ -1,14 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { normalizeRole } from '../utils/roles';
 
 const savedUser = localStorage.getItem('smartsociety_user');
 const parsedUser = savedUser ? JSON.parse(savedUser) : null;
 const savedToken = localStorage.getItem('token');
+const storedRole = parsedUser ? normalizeRole(parsedUser.role) : null;
 
 const initialState = {
-  user: parsedUser,
-  role: parsedUser ? parsedUser.role.toLowerCase() : null,
+  user: storedRole ? parsedUser : null,
+  role: storedRole,
   token: savedToken || null,
-  isAuthenticated: parsedUser ? true : false,
+  isAuthenticated: Boolean(storedRole && savedToken),
 };
 
 const authSlice = createSlice({
@@ -16,13 +18,21 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
-  state.user = action.payload.user;
-  state.role = action.payload.user.role.toLowerCase();
-  state.token = action.payload.token;
-  state.isAuthenticated = true;
-  localStorage.setItem('smartsociety_user', JSON.stringify(action.payload.user));
-  localStorage.setItem('token', action.payload.token);
-},
+      state.user = action.payload.user;
+      state.role = normalizeRole(action.payload.user.role);
+      state.token = action.payload.token;
+      state.isAuthenticated = Boolean(state.role);
+
+      if (state.role) {
+        localStorage.setItem('smartsociety_user', JSON.stringify(action.payload.user));
+        localStorage.setItem('token', action.payload.token);
+      } else {
+        state.user = null;
+        state.token = null;
+        localStorage.removeItem('smartsociety_user');
+        localStorage.removeItem('token');
+      }
+    },
     logout: (state) => {
       state.user = null;
       state.role = null;
