@@ -135,3 +135,83 @@
 .input {
   @apply w-full border border-input rounded-lg px-3 py-2 bg-background;
 }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+img {
+  display: block;
+}
+
+.font-display {
+  font-family: var(--font-heading);
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 500ms ease-out var(--reveal-delay, 0ms),
+    transform 500ms ease-out var(--reveal-delay, 0ms),
+    box-shadow 300ms ease-out;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-media.scroll-reveal {
+  transform: translateY(14px) scale(0.985);
+}
+
+.hero-media.scroll-reveal.is-visible {
+  transform: translateY(0) scale(1);
+}
+
+.hero-badge {
+  animation: badge-float 4s ease-in-out infinite;
+}
+
+main section article.scroll-reveal.is-visible:hover {
+  transform: translateY(-4px);
+}
+
+@keyframes badge-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 640px) {
+  .font-display {
+    letter-spacing: -0.035em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -46,7 +47,7 @@ const App = () => {
       <ToastContainer />
 
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -94,8 +95,9 @@ const App = () => {
 <Route path="emergency" element={<ProtectedRoute allowedRoles={['admin', 'resident']}><EmergencyList /></ProtectedRoute>} />
 <Route path="emergency/broadcast" element={<ProtectedRoute allowedRoles={['admin']}><BroadcastEmergency /></ProtectedRoute>} />
 <Route path="emergency/alert" element={<ProtectedRoute allowedRoles={['resident']}><EmergencyAlert /></ProtectedRoute>} />
-        <Route path="visitor-requests" element={<ProtectedRoute allowedRoles={['admin']}><VisitorRequests /></ProtectedRoute>} />
+       <Route path="visitor-requests" element={<ProtectedRoute allowedRoles={['admin']}><VisitorRequests /></ProtectedRoute>} />
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
     </>
   );

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router'
+import { useEffect } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { loginSuccess } from '../store/authSlice'
 import { loginUser } from '../services/authApi'
@@ -15,6 +17,13 @@ const Login = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
