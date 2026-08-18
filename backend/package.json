@@ -10,7 +10,7 @@
   "seed:admin": "node src/seedAdmin.js",
   "seed:data": "node src/seedData.js",
   "seed": "npm run seed:admin && npm run seed:data"
-}
+},
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cloudinary": "^1.41.3",
