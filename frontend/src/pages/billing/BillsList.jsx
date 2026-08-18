@@ -48,21 +48,21 @@ const BillsList = () => {
 
       <div className="mb-6">
         <h3 className="font-heading text-lg mb-3">Collection Report</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="bg-card border border-border rounded-xl p-4">
-            <p className="text-2xl font-heading">Rs. {totalCollected}</p>
+            <p className="font-heading text-2xl">Rs. {totalCollected}</p>
             <p className="text-sm text-muted-foreground">Total Collected</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-4">
-            <p className="text-2xl font-heading text-secondary">{paidCount}</p>
+            <p className="font-heading text-2xl text-secondary">{paidCount}</p>
             <p className="text-sm text-muted-foreground">Paid</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-4">
-            <p className="text-2xl font-heading">{pendingCount}</p>
+            <p className="font-heading text-2xl">{pendingCount}</p>
             <p className="text-sm text-muted-foreground">Pending</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-4">
-            <p className="text-2xl font-heading text-destructive">{overdueCount}</p>
+            <p className="font-heading text-2xl text-destructive">{overdueCount}</p>
             <p className="text-sm text-muted-foreground">Overdue (+{PENALTY_RATE * 100}%)</p>
           </div>
         </div>
@@ -73,28 +73,33 @@ const BillsList = () => {
       {bills.length === 0 ? (
         <p className="text-muted-foreground text-sm">No bills generated yet.</p>
       ) : (
-        <div className="bg-card border border-border rounded-xl divide-y divide-border">
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
           {bills.map((b) => {
             const overdue = isOverdue(b)
             const penalized = overdue || b.penalty_applied
+
             return (
-              <div key={b._id} className="p-4 flex justify-between items-center gap-4">
-                <div>
-                  <p className="font-medium">{b.flat_id ? `Block ${b.flat_id.block_name} - ${b.flat_id.flat_number}` : 'Unknown flat'}</p>
-                  <p className="text-xs text-muted-foreground">
+              <div key={b._id} className="flex flex-col gap-4 border-b border-border p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="font-medium">
+                    {b.flat_id ? `Block ${b.flat_id.block_name} - ${b.flat_id.flat_number}` : 'Unknown flat'}
+                  </p>
+                  <p className="break-words text-xs text-muted-foreground">
                     Rs. {displayAmount(b)} {penalized && <span className="text-destructive">(incl. penalty)</span>} · due {new Date(b.due_date).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
                   <span className={`text-xs px-2 py-1 rounded-full ${b.payment_status === 'Paid' ? 'bg-secondary/20 text-secondary' : penalized ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'}`}>
                     {b.payment_status === 'Paid' ? 'Paid' : overdue ? 'Overdue' : b.penalty_applied ? 'Penalized' : 'Pending'}
                   </span>
+
                   {b.payment_status !== 'Paid' && (
                     <>
-                      <button onClick={() => handleTogglePenalty(b)} className="text-xs border border-destructive text-destructive px-3 py-1.5 rounded-lg font-medium">
+                      <button onClick={() => handleTogglePenalty(b)} className="w-full rounded-lg border border-destructive px-3 py-2 text-xs font-medium text-destructive sm:w-auto">
                         {b.penalty_applied ? 'Remove Penalty' : 'Apply Penalty'}
                       </button>
-                      <button onClick={() => handleMarkPaid(b._id)} className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-medium">
+                      <button onClick={() => handleMarkPaid(b._id)} className="w-full rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground sm:w-auto">
                         Mark as Paid
                       </button>
                     </>

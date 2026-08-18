@@ -104,7 +104,7 @@ const AddResident = () => {
       <button
         type="submit"
         disabled={loading}
-        className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-medium hover:opacity-90 transition min-w-[180px]"
+        className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-primary-foreground transition hover:opacity-90 sm:w-auto sm:min-w-[180px]"
       >
         {loading ? 'Onboarding...' : 'Onboard Resident'}
       </button>

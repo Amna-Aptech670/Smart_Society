@@ -180,7 +180,7 @@ export default function FacilityBooking() {
 
       {/* Available Facilities */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="font-heading text-lg text-foreground">
               Available Facilities
@@ -324,7 +324,7 @@ export default function FacilityBooking() {
                 return (
                   <div
                     key={booking._id}
-                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/30 transition"
+                    className="flex flex-col gap-4 p-4 hover:bg-muted/30 transition sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -396,7 +396,7 @@ export default function FacilityBooking() {
       {/* Booking Modal */}
       {selectedFacility && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-card border border-border rounded-xl max-w-md w-full p-6 shadow-xl text-foreground">
+                  <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto bg-card border border-border rounded-xl max-w-md w-full p-6 shadow-xl text-foreground">
             <div className="flex items-center justify-between pb-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <CalendarCheck size={18} className="text-primary" />

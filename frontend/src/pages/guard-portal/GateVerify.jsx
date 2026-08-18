@@ -27,7 +27,7 @@ const GateVerify = () => {
     <div>
       <h2 className="font-heading text-2xl mb-6">Gate Verification</h2>
 
-      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 max-w-sm">
+      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 w-full max-w-sm">
         <label className="text-sm text-muted-foreground">6-Digit Gate Pass Code</label>
         <input value={code} onChange={(e) => setCode(e.target.value)} required maxLength={6} className="w-full border border-input rounded-lg px-3 py-2 mb-3 mt-1 bg-background text-center tracking-widest text-lg" />
 

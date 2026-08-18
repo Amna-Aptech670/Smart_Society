@@ -53,17 +53,17 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+    <div className="fixed bottom-4 left-4 right-4 z-50 flex max-w-none flex-col gap-2.5 pointer-events-none sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-sm">
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`pointer-events-auto flex items-center justify-between gap-3 p-4 rounded-xl border shadow-lg transition-all duration-300 ${getToastStyle(
+          className={`pointer-events-auto flex items-start justify-between gap-3 rounded-xl border p-4 shadow-lg transition-all duration-300 ${getToastStyle(
             toast.type
           )}`}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-start gap-3">
             {getIcon(toast.type)}
-            <p className="text-sm font-medium leading-snug">{toast.message}</p>
+            <p className="min-w-0 text-sm font-medium leading-snug break-words">{toast.message}</p>
           </div>
           <button
             onClick={() => removeToast(toast.id)}

@@ -50,20 +50,20 @@ const FlatsList = () => {
       ) : (
         <div className="bg-card border border-border rounded-xl divide-y divide-border">
           {flats.map((f) => (
-            <div key={f._id} className="p-4 flex justify-between items-center gap-4">
-              <span className="font-medium">Block {f.block_name} - {f.flat_number}</span>
+            <div key={f._id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <span className="min-w-0 font-medium">Block {f.block_name} - {f.flat_number}</span>
 
               {editingId === f._id ? (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <select value={editOccupancy} onChange={(e) => setEditOccupancy(e.target.value)} className="border border-input rounded-lg px-2 py-1.5 text-xs bg-background">
                     <option value="Owner">Owner</option>
                     <option value="Tenant">Tenant</option>
                   </select>
-                  <button onClick={() => saveEdit(f._id)} className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-medium">Save</button>
+                  <button onClick={() => saveEdit(f._id)} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">Save</button>
                   <button onClick={() => setEditingId(null)} className="text-xs text-muted-foreground px-2">Cancel</button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="text-sm text-muted-foreground">{f.occupancy_type}</span>
                   <button onClick={() => startEdit(f)} className="text-xs border border-input px-3 py-1.5 rounded-lg font-medium">Edit</button>
                   <button onClick={() => handleDelete(f._id)} className="text-xs border border-destructive text-destructive px-3 py-1.5 rounded-lg font-medium">Delete</button>

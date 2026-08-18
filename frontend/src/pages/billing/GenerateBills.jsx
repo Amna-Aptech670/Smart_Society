@@ -38,7 +38,7 @@ const GenerateBills = () => {
         </div>
         {error && <p className="text-destructive text-sm">{error}</p>}
         <div className="flex justify-end pt-2">
-          <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-medium min-w-[220px]">
+          <button type="submit" disabled={loading} className="w-full bg-primary px-4 py-2.5 rounded-lg font-medium text-primary-foreground sm:w-auto sm:min-w-[220px]">
             {loading ? 'Generating...' : 'Generate Bills for All Flats'}
           </button>
         </div>

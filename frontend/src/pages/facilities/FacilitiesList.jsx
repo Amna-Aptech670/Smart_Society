@@ -22,6 +22,7 @@ const FacilitiesList = () => {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this facility?')) return
+
     try {
       await deleteFacility(id)
       setFacilities(facilities.filter((f) => f._id !== id))
@@ -39,21 +40,24 @@ const FacilitiesList = () => {
       {facilities.length === 0 ? (
         <p className="text-muted-foreground text-sm">No facilities added yet.</p>
       ) : (
-        <div className="bg-card border border-border rounded-xl divide-y divide-border">
+        <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
           {facilities.map((f) => (
-            <div key={f._id} className="p-4 flex justify-between items-start gap-4">
-              <div>
+            <div key={f._id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
                 <p className="font-medium">{f.name}</p>
-                {f.description && <p className="text-sm text-muted-foreground mt-1">{f.description}</p>}
-                <p className="text-xs text-muted-foreground mt-2">
+                {f.description && <p className="mt-1 text-sm text-muted-foreground">{f.description}</p>}
+                <p className="mt-2 text-xs text-muted-foreground">
                   {f.location && `${f.location} · `}{f.timing && `${f.timing} · `}Capacity: {f.capacity}
                 </p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <select value={f.status} onChange={(e) => handleStatusChange(f._id, e.target.value)} className="border border-input rounded-lg px-2 py-1.5 text-xs bg-background">
+
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end shrink-0">
+                <select value={f.status} onChange={(e) => handleStatusChange(f._id, e.target.value)} className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs">
                   {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <button onClick={() => handleDelete(f._id)} className="text-xs border border-destructive text-destructive px-3 py-1.5 rounded-lg font-medium">Delete</button>
+                <button onClick={() => handleDelete(f._id)} className="rounded-lg border border-destructive px-3 py-1.5 text-xs font-medium text-destructive">
+                  Delete
+                </button>
               </div>
             </div>
           ))}

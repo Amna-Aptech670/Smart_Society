@@ -35,40 +35,40 @@ const VisitorRequests = () => {
   return (
     <div>
       <h2 className="font-heading text-2xl mb-6">Visitor Requests</h2>
-      <p className="text-xs text-muted-foreground mb-4">Pending visitor pass requests awaiting approval.</p>
+      <p className="mb-4 text-xs text-muted-foreground">Pending visitor pass requests awaiting approval.</p>
 
-      {loading && <p className="text-muted-foreground text-sm">Loading...</p>}
-      {error && <p className="text-destructive text-sm mb-4">{error}</p>}
+      {loading && <p className="text-sm text-muted-foreground">Loading...</p>}
+      {error && <p className="mb-4 text-sm text-destructive">{error}</p>}
       {!loading && requests.length === 0 && (
-        <p className="text-muted-foreground text-sm">No pending requests right now.</p>
+        <p className="text-sm text-muted-foreground">No pending requests right now.</p>
       )}
 
       {requests.length > 0 && (
-        <div className="bg-card border border-border rounded-xl divide-y divide-border">
+        <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
           {requests.map((r) => (
-            <div key={r._id} className="p-4 flex justify-between items-center gap-4">
-              <div>
+            <div key={r._id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
                 <p className="font-medium">{r.visitor_name}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {r.phone} {r.vehicle_number && `· ${r.vehicle_number}`}
                   {r.flat_id && ` · Block ${r.flat_id.block_name} - ${r.flat_id.flat_number}`}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Requested {new Date(r.createdAt).toLocaleString()}
                 </p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center shrink-0">
                 <button
                   onClick={() => handleDecision(r._id, 'Rejected')}
                   disabled={actingId === r._id}
-                  className="text-xs border border-destructive text-destructive px-3 py-1.5 rounded-lg font-medium disabled:opacity-50"
+                  className="rounded-lg border border-destructive px-3 py-2 text-xs font-medium text-destructive disabled:opacity-50"
                 >
                   Reject
                 </button>
                 <button
                   onClick={() => handleDecision(r._id, 'Pre-Approved')}
                   disabled={actingId === r._id}
-                  className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-medium disabled:opacity-50"
+                  className="rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50"
                 >
                   Approve
                 </button>

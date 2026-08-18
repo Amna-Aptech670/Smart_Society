@@ -25,14 +25,14 @@ const SecurityList = () => {
         {guards.length === 0 ? (
           <p className="text-muted-foreground text-sm">No guard accounts found.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {guards.map((g) => {
               const guardTasks = tasks.filter((t) => t.assigned_to?._id === g._id)
               const active = guardTasks.filter((t) => t.status !== 'Completed').length
               return (
-                <div key={g._id} className="bg-card border border-border rounded-xl p-4">
+                <div key={g._id} className="rounded-xl border border-border bg-card p-4">
                   <p className="font-medium">{g.username}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{active} active task{active !== 1 ? 's' : ''} · {guardTasks.length} total</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{active} active task{active !== 1 ? 's' : ''} · {guardTasks.length} total</p>
                 </div>
               )
             })}
@@ -45,15 +45,15 @@ const SecurityList = () => {
         {tasks.length === 0 ? (
           <p className="text-muted-foreground text-sm">No tasks assigned yet.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl divide-y divide-border">
+          <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
             {tasks.map((t) => (
-              <div key={t._id} className="p-4 flex justify-between items-start gap-4">
-                <div>
+              <div key={t._id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
                   <p className="font-medium">{t.title}</p>
-                  {t.description && <p className="text-sm text-muted-foreground mt-1">{t.description}</p>}
-                  <p className="text-xs text-muted-foreground mt-2">Assigned to {t.assigned_to?.username || 'Unknown'} · {new Date(t.createdAt).toLocaleString()}</p>
+                  {t.description && <p className="mt-1 text-sm text-muted-foreground">{t.description}</p>}
+                  <p className="mt-2 text-xs text-muted-foreground">Assigned to {t.assigned_to?.username || 'Unknown'} · {new Date(t.createdAt).toLocaleString()}</p>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${STATUS_STYLES[t.status] || STATUS_STYLES.Pending}`}>{t.status}</span>
+                <span className={`inline-flex shrink-0 rounded-full px-2 py-1 text-xs ${STATUS_STYLES[t.status] || STATUS_STYLES.Pending}`}>{t.status}</span>
               </div>
             ))}
           </div>

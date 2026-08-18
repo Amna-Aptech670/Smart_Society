@@ -38,7 +38,7 @@ const ResidentComplaints = () => {
     <div>
       <h2 className="font-heading text-2xl mb-6">Complaints</h2>
 
-      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 mb-6 max-w-lg flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 mb-6 w-full max-w-lg flex flex-col gap-3">
         <div>
           <label className="text-sm text-muted-foreground">Category</label>
           <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-input rounded-lg px-3 py-2 mt-1 bg-background">
@@ -56,7 +56,7 @@ const ResidentComplaints = () => {
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        <button type="submit" disabled={loading} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium self-start">
+        <button type="submit" disabled={loading} className="w-full rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground sm:w-auto sm:self-start">
           {loading ? 'Submitting...' : 'Submit Complaint'}
         </button>
       </form>
